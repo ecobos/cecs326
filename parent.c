@@ -1,3 +1,9 @@
+/**
+* Project 2
+* File: parent.c
+* Authors: Edgar Cobos, Seth Merriss, Ivan Ruiz
+*/
+
 # include <stdio.h> 
 # include <stdlib.h> 
 # include <sys/types.h> 
@@ -20,12 +26,12 @@ int main(int argc, char *argv[])
  	int a, b, sleeptime, seed; 
  	pid_t childpid;
  	if (argc != 4) { 
- 		printf("\n Usage: %s <sleeptime(0,50)> <int A> <int B>\n", argv[0]); 
+ 		printf("\n Usage: %s <sleeptime([1,50]> <int A> <int B>\n", argv[0]); 
 	 	exit(1); 
 	 } 
 	
 	if(!aNumber(argv[1]) || !aNumber(argv[2]) || !aNumber(argv[3]) ){
-		printf("\n Please make sure to provide integers only\n Usage: %s <sleeptime(0,50)> <int A> <int B>\n", argv[0]);
+		printf("\n Please make sure to provide integers only\n Usage: %s <sleeptime[1,50]> <int A> <int B>\n", argv[0]);
 		exit(1);
 	}
 	
@@ -37,9 +43,17 @@ int main(int argc, char *argv[])
 		printf("\n Sleeptime must be between 1 and 50, inclusive.\n");
 		exit(1);
 	}
+	
+	if(b == 0){
+		printf("\n Error: Can't divide by zero.\n The third argument, B, may not be zero. \n");
+		exit(1);
+	}
 	 
  	printf("I am parent process, the maximum sleep time is %d and the two numbers are %d and %d\n", sleeptime, a, b);
+	
+	srand((int)(getpid() + childpid)); 
 	sleeptime = rand() % sleeptime; 
+	//printf("sleeping for %d...\n", sleeptime);
 	sleep(sleeptime);
 	char operation[4]; //initialize the char
  	for (int i=0; i < 4;i++){
