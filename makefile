@@ -5,3 +5,4 @@ Parent: parent.c
 
 Child: child.c
 	gcc -o child child.c
+
