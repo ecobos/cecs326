@@ -18,8 +18,15 @@ int main(int argc, char *argv[]) {
 		b = atoi(argv[3]);
 		pid = atoi(argv[4]);
 		operation = atoi(argv[5]);
+		
+		if(b == 0){
+			printf("\n The third argument, B, may not be zero. \n");
+			exit(1);
+		}
+		
 		sleeptime = rand() % sleeptime; 
 		sleep(sleeptime);
+		
 		switch (operation) {
 			case 0:
 				printf("I am child number %d with PID %d, the sum is %d\n", operation, pid, a+b );
@@ -28,7 +35,7 @@ int main(int argc, char *argv[]) {
 				printf("I am child number %d with PID %d, the difference is %d\n", operation, pid, a-b );
 				break;
 			case 2:	
-				printf("I am child number %d with PID %d, the quotient is %d and remainder is %d\n", operation, pid, a/b, a%b);
+				printf("I am child number %d with PID %d, the quotient is %.2f and remainder is %d\n", operation, pid, (float)a/b, a%b);
 				break;
 			case 3:
 				printf("I am child number %d with PID %d, the product is %d\n", operation, pid, a*b);
