@@ -49,10 +49,10 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	
-	if(b == 0){  //can't divide by zero, so we check for that possibility 
+	/*if(b == 0){  //can't divide by zero, so we check for that possibility 
 		printf("\n Error: Can't divide by zero.\n The third argument, B, may not be zero. \n");
 		exit(1);
-	}
+	}*/
 	 
  	printf("I am parent process, the maximum sleep time is %d and the two numbers are %d and %d\n", sleeptime, a, b);
 	

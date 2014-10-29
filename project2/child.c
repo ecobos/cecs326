@@ -52,10 +52,10 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 		
-		if(b == 0) { //can't divide by zero, so we check for that possibility 
+		/*if(b == 0) { //can't divide by zero, so we check for that possibility 
 			printf("\n Error: Can't divide by zero.\n The third argument, B, may not be zero. \n");
 			exit(1);
-		}
+		}*/
 		
 		srand((int)(getpid() + pid)); //create the seed for the random num generator
 		sleeptime = rand() % sleeptime; //get a random sleeptime within range
@@ -69,7 +69,11 @@ int main(int argc, char *argv[]) {
 				printf("I am child number %d with PID %d, the difference is %d\n", operation, pid, a-b );
 				break;
 			case 2:	
-				printf("I am child number %d with PID %d, the quotient is %.2f and remainder is %d\n", operation, pid, (float)a/b, a%b);
+				if(b == 0){
+					printf("I am child number %d with PID %d, I can't divide by zero\n", operation, pid);
+				}else{
+					printf("I am child number %d with PID %d, the quotient is %d and remainder is %d\n", operation, pid, a/b, a%b);
+				}
 				break;
 			case 3:
 				printf("I am child number %d with PID %d, the product is %d\n", operation, pid, a*b);
