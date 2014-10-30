@@ -1,3 +1,9 @@
+/**
+* Project 3
+* file: child.c
+* Authors: Edgar Cobos, Seth Merriss and Ivan Ruiz
+*/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -5,6 +11,7 @@
 #include <errno.h> 
 #include <fcntl.h>
 #include <unistd.h>
+#include <signal.h>
 
 int main(int argc, char *argv[]) {
 	
@@ -27,6 +34,11 @@ int main(int argc, char *argv[]) {
 	n_try = atoi(argv[3]);
 	K = atoi(argv[4]);
 	
+	if(sleeptime < 0 || n_try < 0){
+		printf("\nError: Both sleeptime and number of tries have to be positive integers\n");
+		exit(1);
+	}
+	
 	// creat success returns an int. Failure returns -1, sets errno
 	while ((fileDesc = creat(file, 0)) == -1 && errno == EACCES) {
 		//If there is a failure with creating the file, then 
@@ -36,8 +48,7 @@ int main(int argc, char *argv[]) {
 	 	else { 
 			//if the file can't be created after the specified tries, the print out the error and exit out
 			printf ("\n Unable to generate. k = %d\n", K); 
-			//int ret_value = (int) (pid % 256);
-			exit(K); 
+			kill(getpid(), K); 
 	 	} 
 	}
 	 //deletes the descriptor from the per-process obj reference table
@@ -52,5 +63,5 @@ int main(int argc, char *argv[]) {
 	}
 	
 	unlink(file); //delete the lock file
-	exit(pid & 15);
+	exit(pid & 255); //mask out the least significant 8 bits
 }
