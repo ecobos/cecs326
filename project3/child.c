@@ -13,6 +13,19 @@
 #include <unistd.h>
 #include <signal.h>
 
+int aNumber(char * number){
+	if(*number == '-'){ //check if negative number 
+		number++; //if it is, then just move the pointer to the next char to allow neg val
+	} 
+	while(*number){ //dereference pointer to first char and eval until '\0' is reached
+		if(!isdigit(*number)){ //dereference pointer to first char and eval
+			return 0; //return false
+		}
+		number++; //move the pointer address to the next char
+	}
+	return 1; //return true
+}
+
 int main(int argc, char *argv[]) {
 	
 	char *file; //declare a pointer to a char array (string)
@@ -25,29 +38,41 @@ int main(int argc, char *argv[]) {
 	srand((unsigned) pid); //set the random number seed
 	
 	if(argc != 5) {
-			printf("\nUsage: %s <lock file name> <number of tries> <sleep time> <K number>\n", argv[0]);
+			printf("\nUsage: %s <data file name> <number of tries> <sleep time> <K number>\n", argv[0]);
 			exit(1);
 	}
 	
-	file = argv[1];
-	sleeptime = atoi(argv[2]);
-	n_try = atoi(argv[3]);
+	file = "lock1"; //name the lock file
+	n_try = atoi(argv[2]);
+	sleeptime = atoi(argv[3]);
 	K = atoi(argv[4]);
 	
-	if(sleeptime < 0 || n_try < 0){
-		printf("\nError: Both sleeptime and number of tries have to be positive integers\n");
+	//make sure that the sleeptime is within the proper range
+	if(sleeptime < 0 ){
+		printf("\nError: Sleeptime has to be a positive integers\n");
 		exit(1);
 	}
 	
+	//make sure that the num tries is within the proper raneg
+	if(!aNumber(argv[2]) || n_try < 0){
+		printf("\nError: Number of tries has to be a positive integer\n");
+		exit(1);
+	}
+	
+	++sleeptime; //increment sleeptime by one to make it inclusively the max sleeptime
 	// creat success returns an int. Failure returns -1, sets errno
 	while ((fileDesc = creat(file, 0)) == -1 && errno == EACCES) {
 		//If there is a failure with creating the file, then 
 		// increment the count of tries and place the process to sleep for period of time 
-	 	if (++count < n_try) 
-			sleep(rand() % sleeptime); //place proc to sleep for a random time within range
+	 	if (++count < n_try) {
+			int goSleep = rand() % sleeptime;
+			//printf("\n--- PID: %d (k=%d), sleeping for: %d\n", pid, K, goSleep); //for debug
+			sleep(goSleep); //place proc to sleep for a random time within range
+			
+		}
 	 	else { 
 			//if the file can't be created after the specified tries, the print out the error and exit out
-			printf ("\n Unable to generate. k = %d\n", K); 
+			printf ("\n Unable to generate lock. k = %d\n", K); 
 			kill(getpid(), K); 
 	 	} 
 	}
@@ -56,9 +81,14 @@ int main(int argc, char *argv[]) {
 	//This only prints if the lock file was created succcessfully
 	printf ("\n File %s has been created\n", file);
 	
-	if(fork() == 0){
-		execlp("/bin/cat", "file print", "text.dat", (char *) NULL);
+	//create a child process that will handle the printing of the specified file
+	pid_t grandChild;
+	if((grandChild = fork()) == 0){
+		execlp("/bin/cat", "file print", argv[1], (char *) NULL);
 		perror("\n Exec failure in the child\n");
+		exit(1);
+	}else if (grandChild == -1) {
+		perror("\n Exec failure\n");
 		exit(1);
 	}
 	
